@@ -1,0 +1,85 @@
+# net architecture
+architecture: 
+  type: oenet
+  params:
+    opto_layer_info:
+      type: lrsvtconv
+      kernel_size: 3
+      normalize_weight: True
+      sv_softmax: True
+      sv_share: False
+      kernel_weight_type: x4
+      kernel_rank: 6
+      svbias_type: none
+    first_norm: True
+    pooling_type: avg
+    elec_layer_type: dws-a1
+    channels: [25, 50]
+    elec_layers: [0, 0]
+  
+# log and checkpoint
+data_path: ./data/clsdata/cifar10
+ckpt_path: ./
+ckpt_name: model
+
+# datasets
+num_classes: 10
+dataset: cifar10
+
+# training parameters
+use_gpu: True
+input_size: 32
+epochs: 200
+batch_size: 128
+test_batch: 200
+eval_freq: 5
+workers: 8
+
+# regularization
+mixup: False
+mixup_alpha: 0.4
+
+# conv operator norm regularization
+conv_opnorm: False
+opnorm_bounds: 1
+opnorm_clip_freq: 100  # clip every 100 iterations
+
+# spectral norm
+spectral_norm: False
+
+conv_spectral_norm: False
+rep_name: opto_stem
+# sp_loss_weight: 0.2
+# tv_loss_weight: 0.1
+# tv_loss_mode: full
+
+augmentation:
+  normalize: False
+  random_crop: True
+  random_horizontal_filp: True
+  cutout: False
+  holes: 1
+  length: 8
+
+# optimizer
+optimizer:
+  type: sgd
+  momentum: 0.9
+  weight_decay: 0.0001
+  nesterov: True
+
+# learning rate scheduler
+lr_scheduler:
+  # type: STEP or COSINE or HTD
+  type: COSINE-V2
+  base_lr: 0.1
+  # base_lr: 1.0e-3
+  # only for STEP
+  lr_epochs: [50, 70, 90] 
+  lr_mults: 0.1
+  # for HTD and COSINE
+  min_lr: 0.0001
+  # min_lr: 1.0e-5
+  # only for HTD
+  lower_bound: -6.0
+  upper_bound: 3.0 
